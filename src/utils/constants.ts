@@ -4,27 +4,12 @@ const constants = {
   },
   mongooseModels: {
     USER: 'User',
-    FUNDRAISER: 'FundRaiser',
-    TRANSACTION: 'Transaction',
-    SUBSCRIPTION: 'Subscription',
     REPORT: 'Report',
   },
   userRoles: {
     USER: 'user',
     ADMIN: 'admin',
     SUPER_ADMIN: 'super-admin',
-  },
-
-  transactionTypes: {
-    DEFAULT_DEPOSIT: 'default-deposit',
-    FUNDRAISER_DEPOSIT: 'fundraiser-deposit',
-    WITHDRAWAL: 'withdrawal',
-  },
-
-  transactionStatus: {
-    INITIATED: 'initiated',
-    SUCCESSFUL: 'successful',
-    FAILED: 'failed',
   },
 };
 

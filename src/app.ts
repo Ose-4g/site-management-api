@@ -6,14 +6,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import { TYPES } from './di';
 import { Model } from 'mongoose';
 import { User, IUser } from './models';
-import {
-  AuthService,
-  IAuthService,
-  INotificationService,
-  notificationService,
-  IPaymentService,
-  PaymentService,
-} from './services';
+import { AuthService, IAuthService, INotificationService, notificationService } from './services';
 import './controllers';
 import { env } from './config';
 
@@ -24,7 +17,6 @@ const container = new Container();
 container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
 container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
-container.bind<IPaymentService>(TYPES.PaymentService).to(PaymentService);
 
 const server = new InversifyExpressServer(container);
 
