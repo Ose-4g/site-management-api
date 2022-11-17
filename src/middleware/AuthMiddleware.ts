@@ -32,6 +32,8 @@ export class RequireSignIn extends BaseMiddleware {
 
       const session = await this.sessions.extendSession(token);
 
+      console.log(session);
+
       req.session = session;
 
       next();
@@ -47,9 +49,10 @@ export const requireEntity = (...entities: EntityType[]): RequestHandler => {
       return next(new AppError('User is not logged in', 401));
     }
 
+    console.log(req.session.userType, entities);
     const isValid = entities.includes(req.session.userType);
     if (!isValid) {
-      return next(new AppError('You are not authroized to perform this action', 403));
+      return next(new AppError('You are not authorized to perform this action', 403));
     }
 
     next();

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import Joi from 'joi';
+
 import AppError from '../errors/AppError';
+import Joi from 'joi';
 
 const joiMiddleware = (
   schema: Joi.Schema,
@@ -8,7 +9,7 @@ const joiMiddleware = (
 ): ((req: Request, res: Response, next: NextFunction) => void) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req[property || 'body'], {
-      allowUnknown: true,
+      allowUnknown: false,
     });
 
     //return error if the error object contains details

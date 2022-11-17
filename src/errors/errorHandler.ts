@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger';
+import { NextFunction, Request, Response } from 'express';
+
 import AppError from './AppError';
+import logger from '../utils/logger';
 
 const { NODE_ENV, TEST_TYPE } = process.env;
 const DEVELOPMENT = 'development';

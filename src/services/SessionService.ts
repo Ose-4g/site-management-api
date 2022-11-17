@@ -3,7 +3,7 @@ import { TYPES } from '../di';
 import { Session } from '../dtos';
 import Redis from 'ioredis';
 import { generateReference } from '../utils/helpers';
-import { SessionNotFoundError } from '../errors/AppError';
+import AppError from '../errors/AppError';
 
 export interface ISessionService {
   createToken(dto: Session): Promise<string>;
@@ -18,14 +18,15 @@ export class SessionService implements ISessionService {
 
   async createToken(dto: Session): Promise<string> {
     const token = generateReference();
-    await this.redis.set(token, JSON.stringify(token), 'EX', EXPIRY_SECONDS);
+    await this.redis.set(token, JSON.stringify(dto), 'EX', EXPIRY_SECONDS);
     return token;
   }
 
   async extendSession(token: string): Promise<Session> {
     const stringifiedSession = await this.redis.get(token);
+    console.log(stringifiedSession);
     if (!stringifiedSession) {
-      throw new SessionNotFoundError();
+      throw new AppError('Session not found', 401);
     }
     await this.redis.set(token, stringifiedSession, 'EX', EXPIRY_SECONDS);
     return JSON.parse(stringifiedSession);
