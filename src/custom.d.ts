@@ -9,10 +9,6 @@ declare global {
   namespace Express {
     export interface Request {
       user: IUser;
-      projectRole: string;
-      rootRole: string;
-      rootMember: IRootMember;
-      projectMember: IProjectMember;
     }
   }
 }

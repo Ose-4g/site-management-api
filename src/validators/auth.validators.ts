@@ -1,5 +1,4 @@
 import joi from 'joi';
-import constants from '../utils/constants';
 
 const requiredString = joi.string().required();
 

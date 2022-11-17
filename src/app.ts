@@ -1,20 +1,25 @@
+import './controllers';
+
+import { AuthService, IAuthService, INotificationService, notificationService } from './services';
+import { Company, ICompany, IManager, IUser, Manager, User } from './models';
 import express, { Request, Response } from 'express';
-import errorMiddleWare from './errors/errorHandler';
-import morgan from 'morgan';
+
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import { TYPES } from './di';
 import { Model } from 'mongoose';
-import { User, IUser } from './models';
-import { AuthService, IAuthService, INotificationService, notificationService } from './services';
-import './controllers';
+import { TYPES } from './di';
 import { env } from './config';
+import errorMiddleWare from './errors/errorHandler';
+import morgan from 'morgan';
 
 const { NODE_ENV } = env;
 
 const container = new Container();
 
 container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
+container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
+container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
+
 container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
 

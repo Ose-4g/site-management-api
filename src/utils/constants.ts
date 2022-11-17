@@ -5,6 +5,10 @@ const constants = {
   mongooseModels: {
     USER: 'User',
     REPORT: 'Report',
+    COMPANY: 'Company',
+    SITE: 'Site',
+    DEVICE: 'Device',
+    MANAGER: 'Manager',
   },
   userRoles: {
     USER: 'user',

@@ -5,7 +5,7 @@ import { TYPES } from '../di';
 import AppError from '../errors/AppError';
 import joiMiddleware from '../middleware/joiMiddleware';
 import { IAuthService } from '../services';
-import { LoginDTO, ResetPasswordDTO, SignUpUserDTO, VerifyUserDTO } from '../utils/dtos';
+import { LoginDTO, ResetPasswordDTO, SignUpUserDTO, VerifyUserDTO } from '../dtos/auth';
 import { loginSchema, signUpUserSchema, verifyAccountSchema, resetPasswordSchema } from '../validators';
 import { BaseContoller } from './BaseController';
 
