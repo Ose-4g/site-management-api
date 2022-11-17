@@ -14,6 +14,7 @@ import express, { Request, Response } from 'express';
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Model } from 'mongoose';
+import Redis from 'ioredis';
 import { RequireSignIn } from './middleware/AuthMiddleware';
 import { TYPES } from './di';
 import { env } from './config';
@@ -22,11 +23,13 @@ import morgan from 'morgan';
 
 const { NODE_ENV } = env;
 
+const redis = new Redis(env.REDIS_URL, { password: env.REDIS_PASSWORD });
 const container = new Container();
 
 container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
 container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
+container.bind<Redis>(TYPES.Redis).toConstantValue(redis);
 
 container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);

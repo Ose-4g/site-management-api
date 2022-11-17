@@ -1,3 +1,5 @@
+import { ICompany, IManager } from '../models';
+
 export interface LoginDTO {
   email: string;
   password: string;
@@ -18,3 +20,9 @@ export interface ResetPasswordDTO extends VerifyUserDTO {
 }
 
 export type EntityType = 'Company' | 'Manager';
+
+export interface Session {
+  userType: EntityType;
+  id: string;
+  info: ICompany | IManager;
+}

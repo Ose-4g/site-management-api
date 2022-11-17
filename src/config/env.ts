@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
+import joi from 'joi';
 dotenv.config();
-import Joi from 'joi';
 
-const requiredString = Joi.string().required();
+const requiredString = joi.string().required();
 
 const schema = {
   NODE_ENV: requiredString.default('development'),
@@ -20,8 +20,13 @@ const schema = {
   ACCESS_KEY_ID: requiredString,
   SECRET_ACCESS_KEY: requiredString,
   BUCKET_NAME: requiredString,
+  REDIS_URL: requiredString,
+  REDIS_PASSWORD:
+    process.env.NODE_ENV === 'development'
+      ? joi.string().uri({ scheme: 'redis' })
+      : requiredString.uri({ scheme: 'redis' }),
 };
-const envSchema = Joi.object(schema);
+const envSchema = joi.object(schema);
 
 export interface Env {
   NODE_ENV: string;
@@ -39,6 +44,8 @@ export interface Env {
   ACCESS_KEY_ID: string;
   SECRET_ACCESS_KEY: string;
   BUCKET_NAME: string;
+  REDIS_URL: string;
+  REDIS_PASSWORD: string;
 }
 
 const tenv: any = {};
@@ -51,8 +58,8 @@ function loadEnv() {
 
   //return error if the error object contains details
   if (error !== null && error?.details) {
-    const { details }: Joi.ValidationError = error;
-    const message = details.map((err: Joi.ValidationErrorItem) => err.message).join(',');
+    const { details }: joi.ValidationError = error;
+    const message = details.map((err: joi.ValidationErrorItem) => err.message).join(',');
 
     throw new Error(message);
   }
