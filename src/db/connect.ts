@@ -1,4 +1,5 @@
 import mongoose, { ConnectOptions } from 'mongoose';
+
 import logger from '../utils/logger';
 
 const { MONGO_URL } = process.env;

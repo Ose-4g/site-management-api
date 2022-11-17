@@ -8,7 +8,7 @@ import { deleteSingleFileFromS3 } from '../utils/aws';
 import { inject, injectable } from 'inversify';
 import { Model } from 'mongoose';
 import { TYPES } from '../di';
-import { trimUser } from '../utils/helpers/trimUser';
+import { selectFieldsObject } from '../utils/helpers/trimUser';
 import { mongoosePaginate } from '../utils/helpers';
 
 const { ADMIN, USER, SUPER_ADMIN } = constants.userRoles;
@@ -49,7 +49,7 @@ class UserService implements IUserService {
    */
   async fetchUserProfile(userId: string): Promise<Partial<IUser>> {
     const user = await this.verifyUser(userId as string);
-    return trimUser(user);
+    return selectFieldsObject(user);
   }
 
   /**
