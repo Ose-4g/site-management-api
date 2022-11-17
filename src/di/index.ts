@@ -4,4 +4,6 @@ export const TYPES = {
   Manager: Symbol.for('Manager'),
   NotificationService: Symbol.for('NotificationService'),
   AuthService: Symbol.for('AuthService'),
+  CompanyService: Symbol.for('CompanyService'),
+  RequireSignIn: Symbol.for('RequireSignIn'),
 };

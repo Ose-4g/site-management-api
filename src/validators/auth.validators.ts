@@ -1,6 +1,5 @@
 import joi from 'joi';
-
-const requiredString = joi.string().required();
+import { requiredString } from './general';
 
 const loginSchemaDesc = {
   email: requiredString.email().messages({

@@ -16,3 +16,5 @@ export interface VerifyUserDTO {
 export interface ResetPasswordDTO extends VerifyUserDTO {
   password: string;
 }
+
+export type EntityType = 'Company' | 'Manager';

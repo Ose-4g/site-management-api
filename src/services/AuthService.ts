@@ -1,4 +1,4 @@
-import { IUser } from '../models';
+import { ICompany, IManager, IUser } from '../models';
 import { Model } from 'mongoose';
 import AppError from '../errors/AppError';
 import { generateAccessToken } from '../utils/helpers/token';
@@ -9,25 +9,36 @@ import { INotificationService } from './NotificationService';
 import bcrypt from 'bcryptjs';
 import { generateCode } from '../utils/helpers/generateCode';
 import crypto from 'crypto';
-import { trimUser } from '../utils/helpers/trimUser';
+import { selectFieldsObject } from '../utils/helpers/trimUser';
+import { BaseService } from './BaseService';
+import { StatusCodes } from 'http-status-codes';
+import { EntityType } from '../dtos';
 
 const {} = constants.userRoles;
 
 export interface IAuthService {
-  signupUser(email: string, password: string, name: string, phoneNumber: string): Promise<Partial<IUser>>;
-  login(email: string, password: string): Promise<{ user: Partial<IUser>; token: string }>;
+  login(
+    email: string,
+    password: string,
+    entity: EntityType
+  ): Promise<{ data: Partial<ICompany | IManager>; token: string }>;
   verifyAccount(code: string, email: string): Promise<void>;
   forgotPassword(email: string): Promise<void>;
   resetPassword(email: string, code: string, password: string): Promise<void>;
   requestEmailVerification(email: string): Promise<void>;
+  findEntity(id: string, entity: EntityType): Promise<IManager | ICompany | null>;
 }
 
 @injectable()
-export class AuthService implements IAuthService {
+export class AuthService extends BaseService implements IAuthService {
   constructor(
     @inject(TYPES.User) private User: Model<IUser>,
+    @inject(TYPES.Company) private Company: Model<ICompany>,
+    @inject(TYPES.Manager) private Manager: Model<IManager>,
     @inject(TYPES.NotificationService) private notificationService: INotificationService
-  ) {}
+  ) {
+    super();
+  }
 
   private async sendVerificationCode(user: IUser) {
     const code = generateCode(4);
@@ -50,53 +61,48 @@ export class AuthService implements IAuthService {
     );
   }
 
-  async signupUser(email: string, password: string, name: string, phoneNumber: string): Promise<Partial<IUser>> {
-    //check for previous user with same email
-    const prevUser = await this.User.findOne({ email });
-    if (prevUser) throw new AppError(`Email ${email} already registered`, 400);
-
-    //hash the password and store the user details
-    password = await bcrypt.hash(password, 10);
-    const newUser = await this.User.create({
-      email,
-      password,
-      name,
-      phoneNumber,
-    });
-
-    //generate verfication token
-    this.sendVerificationCode(newUser);
-    return {
-      email,
-      name,
-    };
+  private async findCompany(id: string): Promise<ICompany> {
+    return await this.checkDocumentExists(this.Company, id, 'Company');
   }
 
-  /**
-   *
-   * @param email : email of the user that wants to log in
-   * @param password : passoword of the user that wants to log in
-   * @returns : details of the user that wants to login as well as the access token
-   */
-  login = async (email: string, password: string): Promise<{ user: Partial<IUser>; token: string }> => {
-    let user: IUser | null = await this.User.findOne(
-      {
-        email: email,
-      },
-      '+password'
-    );
-    if (!user) {
-      throw new AppError('User does not exist', 404);
+  private async findManager(id: string): Promise<ICompany> {
+    return await this.checkDocumentExists(this.Manager, id, 'Manager');
+  }
+  async login(
+    email: string,
+    password: string,
+    entity: EntityType
+  ): Promise<{ data: Partial<ICompany | IManager>; token: string }> {
+    let record: ICompany | IManager | null;
+    if (entity === 'Company') {
+      record = await this.Company.findOne({ email });
+    } else {
+      record = await this.Manager.findOne({ email });
     }
 
-    if (!user.emailVerified) throw new AppError('User is not verified', 401);
+    if (!record) {
+      throw new AppError('User does not exist', StatusCodes.NOT_FOUND);
+    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new AppError('Invalid Email or Password', 400);
+    const isMatch = await bcrypt.compare(password, record.password);
+    if (!isMatch) {
+      throw new AppError('Invalid Email or Password', StatusCodes.BAD_REQUEST);
+    }
 
-    const token = await generateAccessToken(user._id);
-    return { user: trimUser(user), token: token };
-  };
+    const token = await generateAccessToken(record._id.toString(), entity);
+    return { data: selectFieldsObject(record, 'email', 'name'), token: token };
+  }
+
+  async findEntity(id: string, entity: EntityType): Promise<IManager | ICompany | null> {
+    switch (entity) {
+      case 'Company':
+        return await this.findCompany(id);
+      case 'Manager':
+        return await this.findManager(id);
+      default:
+        return null;
+    }
+  }
 
   /**
    *

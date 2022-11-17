@@ -1,12 +1,20 @@
 import './controllers';
 
-import { AuthService, IAuthService, INotificationService, notificationService } from './services';
+import {
+  AuthService,
+  CompanyService,
+  IAuthService,
+  ICompanyService,
+  INotificationService,
+  notificationService,
+} from './services';
 import { Company, ICompany, IManager, IUser, Manager, User } from './models';
 import express, { Request, Response } from 'express';
 
 import { Container } from 'inversify';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Model } from 'mongoose';
+import { RequireSignIn } from './middleware/AuthMiddleware';
 import { TYPES } from './di';
 import { env } from './config';
 import errorMiddleWare from './errors/errorHandler';
@@ -22,6 +30,8 @@ container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
 
 container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
+container.bind<ICompanyService>(TYPES.CompanyService).to(CompanyService);
+container.bind<RequireSignIn>(TYPES.RequireSignIn).to(RequireSignIn);
 
 const server = new InversifyExpressServer(container);
 

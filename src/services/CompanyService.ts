@@ -9,7 +9,6 @@ import { INotificationService } from './NotificationService';
 import bcrypt from 'bcryptjs';
 import { generateCode, generateReference } from '../utils/helpers/generateCode';
 import crypto from 'crypto';
-import { trimUser } from '../utils/helpers/trimUser';
 import { CreateCompanyDTO, InviteManagerDTO } from '../dtos';
 import { StatusCodes } from 'http-status-codes';
 import { BaseService } from './BaseService';
