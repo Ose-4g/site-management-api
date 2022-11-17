@@ -24,5 +24,4 @@ export type EntityType = 'Company' | 'Manager';
 export interface Session {
   userType: EntityType;
   id: string;
-  info: ICompany | IManager;
 }

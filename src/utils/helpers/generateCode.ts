@@ -12,8 +12,5 @@ export const generateCode = (n: number) => {
 
 export const generateReference = () => {
   const reference = crypto.randomBytes(32).toString('hex');
-  console.log(reference);
   return reference;
 };
-
-generateReference();

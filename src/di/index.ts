@@ -7,4 +7,5 @@ export const TYPES = {
   CompanyService: Symbol.for('CompanyService'),
   RequireSignIn: Symbol.for('RequireSignIn'),
   Redis: Symbol.for('Redis'),
+  SessionService: Symbol.for('SessionService'),
 };

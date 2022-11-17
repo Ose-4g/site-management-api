@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { ParsedQs } from 'qs';
 import { TYPES } from '../di';
-import { IAuthService } from '../services';
+import { IAuthService, ISessionService } from '../services';
 import AppError from '../errors/AppError';
 import { env } from '../config';
 import jwt, { JwtPayload } from 'jsonwebtoken';
@@ -14,7 +14,7 @@ import { EntityType } from '../dtos';
 
 @injectable()
 export class RequireSignIn extends BaseMiddleware {
-  constructor(@inject(TYPES.AuthService) private authService: IAuthService) {
+  constructor(@inject(TYPES.SessionService) private sessions: ISessionService) {
     super();
   }
   async handler(
@@ -30,28 +30,9 @@ export class RequireSignIn extends BaseMiddleware {
 
       const token: string = authHeader.replace('Bearer ', '');
 
-      //verify JWT
-      let data: any;
-      try {
-        data = await jwt.verify(token, env.JWT_SECRET);
-      } catch (error) {
-        throw new AppError('invalid jwt provided', StatusCodes.UNAUTHORIZED);
-      }
+      const session = await this.sessions.extendSession(token);
 
-      if (!data.id || !data.entity) {
-        throw new AppError('Invalid token provided', StatusCodes.UNAUTHORIZED);
-      }
-
-      //save user object in body if user isn't banned/deleted
-      const entityInfo = await this.authService.findEntity(data.id, data.entity);
-      if (!entityInfo) {
-        throw new AppError('Invalid token provided', StatusCodes.UNAUTHORIZED);
-      }
-      req.session = {
-        id: data.id,
-        userType: data.entity,
-        info: entityInfo,
-      };
+      req.session = session;
 
       next();
     } catch (err) {

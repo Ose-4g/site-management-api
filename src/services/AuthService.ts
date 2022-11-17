@@ -13,6 +13,7 @@ import { selectFieldsObject } from '../utils/helpers/trimUser';
 import { BaseService } from './BaseService';
 import { StatusCodes } from 'http-status-codes';
 import { EntityType } from '../dtos';
+import { ISessionService } from './SessionService';
 
 const {} = constants.userRoles;
 
@@ -35,7 +36,8 @@ export class AuthService extends BaseService implements IAuthService {
     @inject(TYPES.User) private User: Model<IUser>,
     @inject(TYPES.Company) private Company: Model<ICompany>,
     @inject(TYPES.Manager) private Manager: Model<IManager>,
-    @inject(TYPES.NotificationService) private notificationService: INotificationService
+    @inject(TYPES.NotificationService) private notificationService: INotificationService,
+    @inject(TYPES.SessionService) private sessions: ISessionService
   ) {
     super();
   }
@@ -89,7 +91,10 @@ export class AuthService extends BaseService implements IAuthService {
       throw new AppError('Invalid Email or Password', StatusCodes.BAD_REQUEST);
     }
 
-    const token = await generateAccessToken(record._id.toString(), entity);
+    const token = await this.sessions.createToken({
+      userType: entity,
+      id: record._id.toString(),
+    });
     return { data: selectFieldsObject(record, 'email', 'name'), token: token };
   }
 

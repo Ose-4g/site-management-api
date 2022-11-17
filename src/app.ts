@@ -6,6 +6,8 @@ import {
   IAuthService,
   ICompanyService,
   INotificationService,
+  ISessionService,
+  SessionService,
   notificationService,
 } from './services';
 import { Company, ICompany, IManager, IUser, Manager, User } from './models';
@@ -29,6 +31,8 @@ const container = new Container();
 container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
 container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
+container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
+
 container.bind<Redis>(TYPES.Redis).toConstantValue(redis);
 
 container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);

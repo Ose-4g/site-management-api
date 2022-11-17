@@ -7,40 +7,29 @@ const requiredString = joi.string().required();
 const schema = {
   NODE_ENV: requiredString.default('development'),
   MONGO_URL: requiredString,
-  JWT_SECRET: requiredString,
-  JWT_EXPIRES: requiredString,
   NODEMAILER_USER: requiredString,
   CLIENT_ID: requiredString,
   CLIENT_SECRET: requiredString,
   NODEMAILER_REFRESH_TOKEN: requiredString,
   REDIRECT_URI: requiredString,
   EMAIL_FROM: requiredString,
-  PAYSTACK_SECRET_KEY: requiredString,
-  PAYSTACK_PUBLIC_KEY: requiredString,
   ACCESS_KEY_ID: requiredString,
   SECRET_ACCESS_KEY: requiredString,
   BUCKET_NAME: requiredString,
-  REDIS_URL: requiredString,
-  REDIS_PASSWORD:
-    process.env.NODE_ENV === 'development'
-      ? joi.string().uri({ scheme: 'redis' })
-      : requiredString.uri({ scheme: 'redis' }),
+  REDIS_URL: requiredString.uri({ scheme: 'redis' }),
+  REDIS_PASSWORD: process.env.NODE_ENV === 'development' ? joi.string() : requiredString,
 };
 const envSchema = joi.object(schema);
 
 export interface Env {
   NODE_ENV: string;
   MONGO_URL: string;
-  JWT_SECRET: string;
-  JWT_EXPIRES: string;
   NODEMAILER_USER: string;
   CLIENT_ID: string;
   CLIENT_SECRET: string;
   NODEMAILER_REFRESH_TOKEN: string;
   REDIRECT_URI: string;
   EMAIL_FROM: string;
-  PAYSTACK_SECRET_KEY: string;
-  PAYSTACK_PUBLIC_KEY: string;
   ACCESS_KEY_ID: string;
   SECRET_ACCESS_KEY: string;
   BUCKET_NAME: string;

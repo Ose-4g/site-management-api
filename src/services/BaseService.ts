@@ -2,8 +2,10 @@ import { Model, model } from 'mongoose';
 
 import AppError from '../errors/AppError';
 import { StatusCodes } from 'http-status-codes';
+import { injectable } from 'inversify';
 import validator from 'validator';
 
+@injectable()
 export class BaseService {
   async checkDocumentExists<T>(
     model: Model<T>,
