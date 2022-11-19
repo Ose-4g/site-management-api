@@ -49,7 +49,7 @@ export const requireEntity = (...entities: EntityType[]): RequestHandler => {
 
     const isValid = entities.includes(req.session.userType);
     if (!isValid) {
-      return next(new AppError('You are not authroized to perform this action', 403));
+      return next(new AppError('You are not authorized to perform this action', 403));
     }
 
     next();

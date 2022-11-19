@@ -25,7 +25,7 @@ export class AuthController extends BaseContoller {
   @httpPost('/manager-login', joiMiddleware(loginSchema))
   async companyLogin(@response() res: Response, @requestBody() payload: LoginDTO) {
     const { email, password } = payload;
-    const result = await this.authService.login(email, password, 'Company');
+    const result = await this.authService.login(email, password, 'Manager');
     return this.sendResponse(res, 200, 'Successfully logged in', result);
   }
 }

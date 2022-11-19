@@ -73,14 +73,20 @@ export class CompanyService extends BaseService implements ICompanyService {
     const password = await generateReference().substring(0, 7);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // crate new manager
-    await this.Manager.create({
-      name: manager.name,
-      email: manager.email,
-      company: companyId,
-      password: hashedPassword,
-    });
-    await await this.notificationService.sendMail(
+    // check if manager has been sent invite
+    const foundManager = await this.Manager.findOne({ email: manager.email });
+
+    if (!foundManager) {
+      // create new manager
+      await this.Manager.create({
+        name: manager.name,
+        email: manager.email,
+        company: companyId,
+        password: hashedPassword,
+      });
+    }
+
+    await this.notificationService.sendMail(
       manager.email,
       'Invite to Company',
       'Invite to Company',
