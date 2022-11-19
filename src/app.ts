@@ -10,7 +10,7 @@ import {
   SessionService,
   notificationService,
 } from './services';
-import { Company, ICompany, IManager, IUser, Manager, User } from './models';
+import { Company, Device, ICompany, IDevice, IManager, ISite, IUser, Manager, Site, User } from './models';
 import express, { Request, Response } from 'express';
 
 import { Container } from 'inversify';
@@ -31,7 +31,8 @@ const container = new Container();
 container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
 container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
-container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
+container.bind<Model<ISite>>(TYPES.Site).toConstantValue(Site);
+container.bind<Model<IDevice<any>>>(TYPES.Device).toConstantValue(Device);
 
 container.bind<Redis>(TYPES.Redis).toConstantValue(redis);
 
@@ -39,6 +40,7 @@ container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
 container.bind<ICompanyService>(TYPES.CompanyService).to(CompanyService);
 container.bind<RequireSignIn>(TYPES.RequireSignIn).to(RequireSignIn);
+container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
 
 const server = new InversifyExpressServer(container);
 
