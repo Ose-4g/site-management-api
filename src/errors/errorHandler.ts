@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
-import logger from '../utils/logger';
-import AppError from './AppError';
+import { NextFunction, Request, Response } from 'express';
 
-const { NODE_ENV, TEST_TYPE } = process.env;
+import AppError from './AppError';
+import logger from '../utils/logger';
+
+const { NODE_ENV } = process.env;
 const DEVELOPMENT = 'development';
 
 const errorMiddleWare = async (error: AppError, req: Request, res: Response, next: NextFunction): Promise<void> => {

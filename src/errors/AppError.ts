@@ -9,5 +9,4 @@ class AppError extends Error {
   }
 }
 
-export class SessionNotFoundError extends Error {}
 export default AppError;

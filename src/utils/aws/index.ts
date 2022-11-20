@@ -1,10 +1,10 @@
+import { Request } from 'express';
 import aws from 'aws-sdk';
-import { Request, Response } from 'express';
+import { env } from '../../config';
+import { formatLog } from '../logger';
+import logger from '../logger';
 import multer from 'multer';
 import multers3 from 'multer-s3';
-import { env } from '../../config';
-import logger from '../logger';
-import { formatLog } from '../logger';
 
 const { ACCESS_KEY_ID, BUCKET_NAME, SECRET_ACCESS_KEY } = env;
 const s3 = new aws.S3({
