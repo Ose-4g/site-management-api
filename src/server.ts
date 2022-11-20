@@ -1,9 +1,11 @@
 import 'reflect-metadata';
-import dotenv from 'dotenv';
-dotenv.config();
+import './mqtt';
+
 import app from './app';
-import logger from './utils/logger';
 import connectToDB from './db/connect';
+import dotenv from 'dotenv';
+import logger from './utils/logger';
+dotenv.config();
 
 const { PORT } = process.env;
 

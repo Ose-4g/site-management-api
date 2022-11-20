@@ -10,7 +10,7 @@ import {
   SessionService,
   notificationService,
 } from './services';
-import { Company, Device, ICompany, IDevice, IManager, ISite, Manager, Site } from './models';
+import { Company, Device, HeartBeat, ICompany, IDevice, IHeartBeat, IManager, ISite, Manager, Site } from './models';
 import { IManagerService, ManagerService } from './services/ManagerService';
 import express, { Request, Response } from 'express';
 
@@ -33,11 +33,14 @@ container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
 container.bind<Model<ISite>>(TYPES.Site).toConstantValue(Site);
 container.bind<Model<IDevice<any>>>(TYPES.Device).toConstantValue(Device);
+container.bind<Model<IHeartBeat>>(TYPES.HeartBeat).toConstantValue(HeartBeat);
 
 container.bind<Redis>(TYPES.Redis).toConstantValue(redis);
 
-container.bind<INotificationService>(TYPES.NotificationService).toConstantValue(notificationService);
-container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
+container
+  .bind<INotificationService>(TYPES.NotificationService)
+  .toConstantVontainer.bind<IAuthService>(TYPES.AuthService)
+  .to(AuthService);
 container.bind<ICompanyService>(TYPES.CompanyService).to(CompanyService);
 container.bind<RequireSignIn>(TYPES.RequireSignIn).to(RequireSignIn);
 container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
