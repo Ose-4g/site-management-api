@@ -17,7 +17,11 @@ client.on('connect', function () {
 client.on(env.APP_ID, async function (topic: any, payload: any, packet: any) {
   const data = JSON.parse(Buffer.from(payload).toString());
   console.log(topic, '--->', data);
-  await heartBeatService.createRecord(data);
+  try {
+    await heartBeatService.createRecord(data);
+  } catch (error) {
+    console.log('error', error);
+  }
 });
 
 console.log('listening on mqtt channel');
