@@ -9,6 +9,8 @@ const constants = {
     SITE: 'Site',
     DEVICE: 'Device',
     MANAGER: 'Manager',
+    HEARTBEAT: 'HeartBeat',
+    MAINTENANCE_LOG: 'MaintenanceLog',
   },
   userRoles: {
     USER: 'user',
