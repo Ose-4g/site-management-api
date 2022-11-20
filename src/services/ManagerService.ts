@@ -9,7 +9,7 @@ import { CreateDeviceDTO, CreateSiteDTO } from '../dtos/manager';
 
 export interface IManagerService {
   createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
-  createDevice<T>(dto: CreateDeviceDTO<T>): Promise<IDevice<T>>;
+  createDevice<T>(dto: CreateDeviceDTO<T>, managerId: string): Promise<IDevice<T>>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
   getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>>;
 }
@@ -40,11 +40,18 @@ export class ManagerService extends BaseService implements IManagerService {
     });
   }
 
-  async createDevice<T>(dto: CreateDeviceDTO<T>): Promise<IDevice<T>> {
+  async createDevice<T>(dto: CreateDeviceDTO<T>, managerId: string): Promise<IDevice<T>> {
+    // check if the site exists and is connected with the manager.
+    const site = await this.checkSite(dto.site);
+
+    if (site.manager !== managerId) {
+      throw new AppError('You cannot perform this action', StatusCodes.FORBIDDEN);
+    }
+
     const device = await this.Device.findOne({ site: dto.site, name: dto.name });
 
     if (device) {
-      throw new AppError(`DTO with name ${dto.name} already exists on this site`, StatusCodes.CONFLICT);
+      throw new AppError(`${dto.type} with name ${dto.name} already exists on this site`, StatusCodes.CONFLICT);
     }
 
     return await this.Device.create(dto);
@@ -57,9 +64,9 @@ export class ManagerService extends BaseService implements IManagerService {
     throw new Error('Method not implemented.');
   }
 
-  // private async checkSite(id: string): Promise<ISite> {
-  //   return this.checkDocumentExists(this.Site, id, 'Site');
-  // }
+  private async checkSite(id: string): Promise<ISite> {
+    return this.checkDocumentExists(this.Site, id, 'Site');
+  }
 
   // private async checkDevice<T>(id: string): Promise<IDevice<T>> {
   //   return this.checkDocumentExists(this.Device, id, 'Device');

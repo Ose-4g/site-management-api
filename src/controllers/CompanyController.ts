@@ -17,13 +17,13 @@ export class CompanyController extends BaseContoller {
   }
 
   @httpPost('/new', joiMiddleware(createCompanySchema))
-  async signUpUser(@response() res: Response, @requestBody() payload: CreateCompanyDTO) {
+  async createCompany(@response() res: Response, @requestBody() payload: CreateCompanyDTO) {
     const newCompany = await this.companyService.crateCompany(payload);
     return this.sendResponse(res, StatusCodes.CREATED, 'created company successfully', newCompany);
   }
 
   @httpPost('/invite-manager', joiMiddleware(inviteManagerSchema), TYPES.RequireSignIn, requireEntity('Company'))
-  async login(@request() req: Request, @response() res: Response, @requestBody() payload: InviteManagerDTO) {
+  async inviteManager(@request() req: Request, @response() res: Response, @requestBody() payload: InviteManagerDTO) {
     await this.companyService.inviteManager(req.session.id, payload);
     return this.sendResponse(res, StatusCodes.OK, `Invite has been sent to ${payload.email}`);
   }

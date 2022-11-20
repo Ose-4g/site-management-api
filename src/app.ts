@@ -11,6 +11,7 @@ import {
   notificationService,
 } from './services';
 import { Company, Device, ICompany, IDevice, IManager, ISite, Manager, Site } from './models';
+import { IManagerService, ManagerService } from './services/ManagerService';
 import express, { Request, Response } from 'express';
 
 import { Container } from 'inversify';
@@ -40,6 +41,7 @@ container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
 container.bind<ICompanyService>(TYPES.CompanyService).to(CompanyService);
 container.bind<RequireSignIn>(TYPES.RequireSignIn).to(RequireSignIn);
 container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
+container.bind<IManagerService>(TYPES.ManagerService).to(ManagerService);
 
 const server = new InversifyExpressServer(container);
 
