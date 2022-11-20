@@ -11,4 +11,5 @@ export const TYPES = {
   Redis: Symbol.for('Redis'),
   SessionService: Symbol.for('SessionService'),
   ManagerService: Symbol.for('ManagerService'),
+  HeartBeatService: Symbol.for('HeartBeatService'),
 };
