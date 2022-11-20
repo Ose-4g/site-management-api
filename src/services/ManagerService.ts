@@ -1,105 +1,67 @@
-import { ICompany, IManager, IUser } from '../models';
+import { IDevice, ISite } from '../models';
 import { Model } from 'mongoose';
 import AppError from '../errors/AppError';
-import { generateAccessToken } from '../utils/helpers/token';
-import constants from '../utils/constants';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di';
-import { INotificationService } from './NotificationService';
-import bcrypt from 'bcryptjs';
-import { generateCode, generateReference } from '../utils/helpers/generateCode';
-import crypto from 'crypto';
-import { CreateCompanyDTO, InviteManagerDTO } from '../dtos';
 import { StatusCodes } from 'http-status-codes';
 import { BaseService } from './BaseService';
+import { CreateDeviceDTO, CreateSiteDTO } from '../dtos/manager';
 
-export interface ICompanyService {
-  crateCompany(dto: CreateCompanyDTO): Promise<ICompany>;
-  inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void>;
+export interface IManagerService {
+  createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
+  createDevice<T>(dto: CreateDeviceDTO<T>): Promise<IDevice<T>>;
+  getSitesForManager(managerId: string): Promise<ISite[]>;
+  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>>;
 }
 
 @injectable()
-export class CompanyService extends BaseService implements ICompanyService {
+export class ManagerService extends BaseService implements IManagerService {
   constructor(
-    @inject(TYPES.User) private User: Model<IUser>,
-    @inject(TYPES.Company) private Company: Model<ICompany>,
-    @inject(TYPES.Manager) private Manager: Model<IManager>,
-    @inject(TYPES.NotificationService) private notificationService: INotificationService
+    @inject(TYPES.Device) private Device: Model<IDevice<any>>,
+    @inject(TYPES.Site) private Site: Model<ISite>
   ) {
     super();
   }
 
-  private async checkCompany(id: string): Promise<ICompany> {
-    return this.checkDocumentExists(this.Company, id, 'Company');
-  }
-  private async sendVerificationCode(user: IUser) {
-    const code = generateCode(4);
-    const minutesToExpire = 10;
-    user.verifyCode = crypto.createHash('md5').update(code).digest('hex');
-    user.verifyCodeExpires = new Date(Date.now() + minutesToExpire * 60 * 1000); //should expire in 1o minutes
+  async createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite> {
+    // check if site with same name exsits under same manager.
+    let site = await this.Site.findOne({ name: dto.name, manager: managerId });
 
-    await user.save();
-    await this.notificationService.sendMail(
-      user.email,
-      'Verify your email',
-      'Verify your email',
-      `
-    Hi ${user.name},<br/>
-    Use the code below to verify your email<br/>
-    <h3>${code}</h3><br/>
-    Note that your code will expire after ${minutesToExpire} minutes
-    `,
-      false
-    );
-  }
-
-  async crateCompany(dto: CreateCompanyDTO): Promise<ICompany> {
-    const prevCompany = await this.Company.findOne({ email: dto.email });
-    if (prevCompany) {
-      throw new AppError(`Email ${dto.email} is already registered`, StatusCodes.BAD_REQUEST);
+    if (site) {
+      throw new AppError(
+        `You already created a site with name ${dto.name}. Please use another name`,
+        StatusCodes.CONFLICT
+      );
     }
 
-    //hash the password and store the user details
-    const password = await bcrypt.hash(dto.password, 10);
-
-    return await this.Company.create({
+    return await this.Site.create({
       ...dto,
-      password,
+      manager: managerId,
     });
   }
 
-  async inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void> {
-    const company = await this.checkCompany(companyId);
-    const password = await generateReference().substring(0, 7);
-    const hashedPassword = await bcrypt.hash(password, 10);
+  async createDevice<T>(dto: CreateDeviceDTO<T>): Promise<IDevice<T>> {
+    const device = await this.Device.findOne({ site: dto.site, name: dto.name });
 
-    // check if manager has been sent invite
-    const foundManager = await this.Manager.findOne({ email: manager.email });
-
-    if (!foundManager) {
-      // create new manager
-      await this.Manager.create({
-        name: manager.name,
-        email: manager.email,
-        company: companyId,
-        password: hashedPassword,
-      });
+    if (device) {
+      throw new AppError(`DTO with name ${dto.name} already exists on this site`, StatusCodes.CONFLICT);
     }
 
-    await this.notificationService.sendMail(
-      manager.email,
-      'Invite to Company',
-      'Invite to Company',
-      `
-      <p>Hi ${manager.name},</p>
-      <p>You've been invited to the company ${company.name} to manage their sites.</p>
-      <p>Log in using these details</p>
-      <br/>
-      <b>Email:</b>${manager.email}<br/>
-      <b>Password:</b>${password}<br/><br/>
-      <p>Please ensure change your password on login</p>
-      `,
-      false
-    );
+    return await this.Device.create(dto);
   }
+
+  getSitesForManager(managerId: string): Promise<ISite[]> {
+    throw new Error('Method not implemented.');
+  }
+  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>> {
+    throw new Error('Method not implemented.');
+  }
+
+  // private async checkSite(id: string): Promise<ISite> {
+  //   return this.checkDocumentExists(this.Site, id, 'Site');
+  // }
+
+  // private async checkDevice<T>(id: string): Promise<IDevice<T>> {
+  //   return this.checkDocumentExists(this.Device, id, 'Device');
+  // }
 }

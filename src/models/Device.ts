@@ -17,6 +17,7 @@ export interface SolarPanelMetadata {
 }
 
 export interface IDevice<T> extends BaseModel {
+  name: string;
   type: DeviceType;
   site: PopulatedDoc<ISite>;
   maintenanceWindow: number;
@@ -25,6 +26,10 @@ export interface IDevice<T> extends BaseModel {
 
 const deviceSchema = new Schema<IDevice<any>>(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     type: {
       type: String,
       required: true,

@@ -1,6 +1,5 @@
-import { Model, model } from 'mongoose';
-
 import AppError from '../errors/AppError';
+import { Model } from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 import { injectable } from 'inversify';
 import validator from 'validator';

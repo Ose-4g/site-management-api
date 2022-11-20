@@ -4,12 +4,8 @@ import { inject, injectable } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { ParsedQs } from 'qs';
 import { TYPES } from '../di';
-import { IAuthService, ISessionService } from '../services';
+import { ISessionService } from '../services';
 import AppError from '../errors/AppError';
-import { env } from '../config';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { IUser } from '../models';
-import { StatusCodes } from 'http-status-codes';
 import { EntityType } from '../dtos';
 
 @injectable()

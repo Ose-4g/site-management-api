@@ -1,12 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { inject } from 'inversify';
-import { controller, httpPost, next, request, requestBody, response } from 'inversify-express-utils';
+import { controller, httpPost, request, requestBody, response } from 'inversify-express-utils';
 import { TYPES } from '../di';
-import AppError from '../errors/AppError';
 import joiMiddleware from '../middleware/joiMiddleware';
-import { IAuthService, ICompanyService } from '../services';
-import { LoginDTO, ResetPasswordDTO, SignUpUserDTO, VerifyUserDTO } from '../dtos/auth';
-import { loginSchema, signUpUserSchema, verifyAccountSchema, resetPasswordSchema } from '../validators';
+import { ICompanyService } from '../services';
 import { BaseContoller } from './BaseController';
 import { createCompanySchema, inviteManagerSchema } from '../validators/company.validators';
 import { CreateCompanyDTO, InviteManagerDTO } from '../dtos';

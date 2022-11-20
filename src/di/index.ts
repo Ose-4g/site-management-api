@@ -1,5 +1,4 @@
 export const TYPES = {
-  User: Symbol.for('User'),
   Company: Symbol.for('Company'),
   Manager: Symbol.for('Manager'),
   Site: Symbol.for('Site'),

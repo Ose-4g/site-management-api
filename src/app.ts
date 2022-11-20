@@ -10,7 +10,7 @@ import {
   SessionService,
   notificationService,
 } from './services';
-import { Company, Device, ICompany, IDevice, IManager, ISite, IUser, Manager, Site, User } from './models';
+import { Company, Device, ICompany, IDevice, IManager, ISite, Manager, Site } from './models';
 import express, { Request, Response } from 'express';
 
 import { Container } from 'inversify';
@@ -28,7 +28,6 @@ const { NODE_ENV } = env;
 const redis = new Redis(env.REDIS_URL, { password: env.REDIS_PASSWORD });
 const container = new Container();
 
-container.bind<Model<IUser>>(TYPES.User).toConstantValue(User);
 container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
 container.bind<Model<ISite>>(TYPES.Site).toConstantValue(Site);

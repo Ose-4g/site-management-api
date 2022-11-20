@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import AppError from './AppError';
 import logger from '../utils/logger';
 
-const { NODE_ENV, TEST_TYPE } = process.env;
+const { NODE_ENV } = process.env;
 const DEVELOPMENT = 'development';
 
 const errorMiddleWare = async (error: AppError, req: Request, res: Response, next: NextFunction): Promise<void> => {
