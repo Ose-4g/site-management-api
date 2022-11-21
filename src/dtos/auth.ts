@@ -1,5 +1,3 @@
-import { ICompany, IManager } from '../models';
-
 export interface LoginDTO {
   email: string;
   password: string;
