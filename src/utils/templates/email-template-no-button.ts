@@ -117,7 +117,7 @@ export default (contentHeader: string, message: string, footer = DEFAULT) => {
   
     <!-- start preheader -->
     <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-    ${contentHeader} - MySR
+    ${contentHeader} - Power Remote Management
     </div>
     <!-- end preheader -->
   
@@ -159,8 +159,8 @@ export default (contentHeader: string, message: string, footer = DEFAULT) => {
 
             <tr>
               <td style="padding: 36px 24px 20px;" bgcolor="#ffffff" align="center">
-                <p class = "logo-alt">MySR</p>
-              <!-- <img src="" bgcolor="#ffffff" alt="MySR Logo" border="0" width="100" height="100" style="display: block; width: 270px; height:70px;" /> -->
+                <p class = "logo-alt">Power Remote Management</p>
+              <!-- <img src="" bgcolor="#ffffff" alt="Power Remote Management Logo" border="0" width="100" height="100" style="display: block; width: 270px; height:70px;" /> -->
 
             </td>
             </tr>  
@@ -203,7 +203,7 @@ export default (contentHeader: string, message: string, footer = DEFAULT) => {
             <!-- start copy -->
             <tr>
               <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px; border-bottom: 3px solid #d4dadf">
-                <p style="margin: 0;">Cheers,<br> MySR</p>
+                <p style="margin: 0;">Cheers,<br> Power Remote Management</p>
               </td>
             </tr>
             <!-- end copy -->

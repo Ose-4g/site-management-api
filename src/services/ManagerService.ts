@@ -44,7 +44,7 @@ export class ManagerService extends BaseService implements IManagerService {
     // check if the site exists and is connected with the manager.
     const site = await this.checkSite(dto.site);
 
-    if (site.manager !== managerId) {
+    if (site.manager.toString() !== managerId.toString()) {
       throw new AppError('You cannot perform this action', StatusCodes.FORBIDDEN);
     }
 

@@ -18,6 +18,8 @@ const schema = {
   BUCKET_NAME: requiredString,
   REDIS_URL: requiredString.uri({ scheme: 'redis' }),
   REDIS_PASSWORD: process.env.NODE_ENV === 'development' ? joi.string() : requiredString,
+  MQTT_URL: requiredString.uri({ scheme: 'mqtt' }),
+  APP_ID: requiredString,
 };
 const envSchema = joi.object(schema);
 
@@ -35,6 +37,8 @@ export interface Env {
   BUCKET_NAME: string;
   REDIS_URL: string;
   REDIS_PASSWORD: string;
+  MQTT_URL: string;
+  APP_ID: string;
 }
 
 const tenv: any = {};
