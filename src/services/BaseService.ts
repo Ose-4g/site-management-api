@@ -12,7 +12,7 @@ export class BaseService {
     modelName: string,
     options?: { select?: string; populate?: string[] }
   ): Promise<T> {
-    if (!validator.isMongoId(documentId)) {
+    if (!documentId || !validator.isMongoId(documentId)) {
       throw new AppError('Invalid id provided', StatusCodes.BAD_REQUEST);
     }
 
