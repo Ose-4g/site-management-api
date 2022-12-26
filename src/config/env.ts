@@ -17,7 +17,6 @@ const schema = {
   SECRET_ACCESS_KEY: requiredString,
   BUCKET_NAME: requiredString,
   REDIS_URL: requiredString.uri({ scheme: 'redis' }),
-  REDIS_PASSWORD: process.env.NODE_ENV === 'development' ? joi.string() : requiredString,
   MQTT_URL: requiredString.uri({ scheme: 'mqtt' }),
   APP_ID: requiredString,
 };
