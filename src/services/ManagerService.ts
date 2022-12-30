@@ -11,7 +11,7 @@ export interface IManagerService {
   createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
   createDevice<T>(dto: CreateDeviceDTO<T>, managerId: string): Promise<IDevice<T>>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
-  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>>;
+  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>[]>;
 }
 
 @injectable()
@@ -57,11 +57,16 @@ export class ManagerService extends BaseService implements IManagerService {
     return await this.Device.create(dto);
   }
 
-  getSitesForManager(managerId: string): Promise<ISite[]> {
-    throw new Error('Method not implemented.');
+  async getSitesForManager(managerId: string): Promise<ISite[]> {
+    return await this.Site.find({ manager: managerId });
   }
-  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>> {
-    throw new Error('Method not implemented.');
+
+  async getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>[]> {
+    const site = await this.checkSite(siteId);
+    if (site.manager.toString() !== managerid) {
+      throw new AppError('You cannot access this site', 403);
+    }
+    return await this.Device.find({ site: siteId });
   }
 
   private async checkSite(id: string): Promise<ISite> {

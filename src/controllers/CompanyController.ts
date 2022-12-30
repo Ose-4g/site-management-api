@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { inject } from 'inversify';
 import { controller, httpPost, request, requestBody, response } from 'inversify-express-utils';
 import { TYPES } from '../di';
@@ -9,6 +9,7 @@ import { createCompanySchema, inviteManagerSchema } from '../validators/company.
 import { CreateCompanyDTO, InviteManagerDTO } from '../dtos';
 import { StatusCodes } from 'http-status-codes';
 import { requireEntity } from '../middleware/AuthMiddleware';
+import { IRequest } from '../utils/types';
 
 @controller('/api/v1/company')
 export class CompanyController extends BaseContoller {
@@ -18,12 +19,12 @@ export class CompanyController extends BaseContoller {
 
   @httpPost('/new', joiMiddleware(createCompanySchema))
   async createCompany(@response() res: Response, @requestBody() payload: CreateCompanyDTO) {
-    const newCompany = await this.companyService.crateCompany(payload);
+    const newCompany = await this.companyService.createCompany(payload);
     return this.sendResponse(res, StatusCodes.CREATED, 'created company successfully', newCompany);
   }
 
   @httpPost('/invite-manager', joiMiddleware(inviteManagerSchema), TYPES.RequireSignIn, requireEntity('Company'))
-  async inviteManager(@request() req: Request, @response() res: Response, @requestBody() payload: InviteManagerDTO) {
+  async inviteManager(@request() req: IRequest, @response() res: Response, @requestBody() payload: InviteManagerDTO) {
     await this.companyService.inviteManager(req.session.id, payload);
     return this.sendResponse(res, StatusCodes.OK, `Invite has been sent to ${payload.email}`);
   }

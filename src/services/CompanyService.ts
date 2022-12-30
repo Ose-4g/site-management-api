@@ -12,7 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseService } from './BaseService';
 
 export interface ICompanyService {
-  crateCompany(dto: CreateCompanyDTO): Promise<ICompany>;
+  createCompany(dto: CreateCompanyDTO): Promise<ICompany>;
   inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void>;
 }
 
@@ -33,7 +33,7 @@ export class CompanyService extends BaseService implements ICompanyService {
   //   const code = generateCode(4);
   //   const minutesToExpire = 10;
   //   user.verifyCode = crypto.createHash('md5').update(code).digest('hex');
-  //   user.verifyCodeExpires = new Date(Date.now() + minutesToExpire * 60 * 1000); //should expire in 1o minutes
+  //   user.verifyCodeExpires = new Date(Date.now() + minutesToExpire * 60 * 1000); //should expire in 10 minutes
 
   //   await user.save();
   //   await this.notificationService.sendMail(
@@ -50,10 +50,10 @@ export class CompanyService extends BaseService implements ICompanyService {
   //   );
   // }
 
-  async crateCompany(dto: CreateCompanyDTO): Promise<ICompany> {
+  async createCompany(dto: CreateCompanyDTO): Promise<ICompany> {
     const prevCompany = await this.Company.findOne({ email: dto.email });
     if (prevCompany) {
-      throw new AppError(`Email ${dto.email} is already registered`, StatusCodes.BAD_REQUEST);
+      throw new AppError(`Email ${dto.email} is already registered`, StatusCodes.CONFLICT);
     }
 
     //hash the password and store the user details
@@ -73,6 +73,12 @@ export class CompanyService extends BaseService implements ICompanyService {
     // check if manager has been sent invite
     const foundManager = await this.Manager.findOne({ email: manager.email });
 
+    if (foundManager?.company.toString() !== companyId) {
+      throw new AppError('Manager is registered with another company', StatusCodes.CONFLICT);
+    } else {
+      foundManager.password = hashedPassword;
+      await foundManager.save();
+    }
     if (!foundManager) {
       // create new manager
       await this.Manager.create({
@@ -98,5 +104,9 @@ export class CompanyService extends BaseService implements ICompanyService {
       `,
       false
     );
+  }
+
+  async listManagers(companyId: string): Promise<IManager[]> {
+    return await this.Manager.find({ company: companyId });
   }
 }

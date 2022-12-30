@@ -1,16 +1,17 @@
 import './controllers';
+import 'reflect-metadata';
 
 import {
   AuthService,
   CompanyService,
+  HeartBeatService,
   IAuthService,
   ICompanyService,
+  IHearbeatService,
   INotificationService,
   ISessionService,
   SessionService,
   notificationService,
-  IHearbeatService,
-  HeartBeatService,
 } from './services';
 import { Company, Device, HeartBeat, ICompany, IDevice, IHeartBeat, IManager, ISite, Manager, Site } from './models';
 import { IManagerService, ManagerService } from './services/ManagerService';

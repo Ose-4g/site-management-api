@@ -9,17 +9,14 @@
     "build": "rimraf dist && tsc ",
     "dev": "cross-env NODE_ENV=development  nodemon",
     "start": "NODE_ENV=production node dist/server.js",
-    "test": "yarn run unit-test && yarn run integration-test",
-    "new-test": "yarn run build && cross-env NODE_ENV=test TEST_TYPE=unit mocha dist/_test_/unit/service/user/banUserLogic.js --recursive --exit --timeout 25000",
-    "format": "prettier --write src/",
-    "coverage": "nyc yarn run unit-test",
-    "integration-test": "echo 'no integration tests yet'",
-    "unit-test": "echo 'no unit tests yet' ",
+    "test": "cross-env NODE_ENV=test TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/**/*.ts' --exit --timeout 50000",
+    "format": "prettier --write src/ && prettier --write test/",
     "serve:dev": "cross-env NODE_ENV=production  nodemon",
+    "coverage": "nyc yarn run test",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
+    "**/**/*.{ts,tsx}": [
       "prettier --write"
     ]
   },
@@ -51,9 +48,11 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.8",
+    "@types/mocha": "^10.0.1",
     "@types/morgan": "^1.9.3",
     "@types/multer": "^1.4.7",
     "@types/multer-s3": "^2.7.11",
