@@ -73,7 +73,7 @@ export class ManagerService extends BaseService implements IManagerService {
     return this.checkDocumentExists(this.Site, id, 'Site');
   }
 
-  private async checkDevice<T>(id: string): Promise<IDevice<T>> {
-    return this.checkDocumentExists(this.Device, id, 'Device');
-  }
+  // private async checkDevice<T>(id: string): Promise<IDevice<T>> {
+  //   return this.checkDocumentExists(this.Device, id, 'Device');
+  // }
 }

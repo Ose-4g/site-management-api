@@ -12,7 +12,7 @@ import { StatusCodes } from 'http-status-codes';
 import { BaseService } from './BaseService';
 
 export interface ICompanyService {
-  crateCompany(dto: CreateCompanyDTO): Promise<ICompany>;
+  createCompany(dto: CreateCompanyDTO): Promise<ICompany>;
   inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void>;
 }
 
@@ -50,10 +50,10 @@ export class CompanyService extends BaseService implements ICompanyService {
   //   );
   // }
 
-  async crateCompany(dto: CreateCompanyDTO): Promise<ICompany> {
+  async createCompany(dto: CreateCompanyDTO): Promise<ICompany> {
     const prevCompany = await this.Company.findOne({ email: dto.email });
     if (prevCompany) {
-      throw new AppError(`Email ${dto.email} is already registered`, StatusCodes.BAD_REQUEST);
+      throw new AppError(`Email ${dto.email} is already registered`, StatusCodes.CONFLICT);
     }
 
     //hash the password and store the user details

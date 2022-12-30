@@ -1,23 +1,18 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { ParamsDictionary } from 'express-serve-static-core';
+import { Response, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { BaseMiddleware } from 'inversify-express-utils';
-import { ParsedQs } from 'qs';
 import { TYPES } from '../di';
 import { ISessionService } from '../services';
 import AppError from '../errors/AppError';
 import { EntityType } from '../dtos';
+import { IRequest } from '../utils/types';
 
 @injectable()
 export class RequireSignIn extends BaseMiddleware {
   constructor(@inject(TYPES.SessionService) private sessions: ISessionService) {
     super();
   }
-  async handler(
-    req: Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>,
-    res: Response<any, Record<string, any>>,
-    next: NextFunction
-  ): Promise<void> {
+  async handler(req: IRequest, res: Response<any, Record<string, any>>, next: NextFunction): Promise<void> {
     try {
       const authHeader: string = req.headers['authorization'] || '';
       if (!authHeader) {
@@ -39,8 +34,8 @@ export class RequireSignIn extends BaseMiddleware {
   }
 }
 
-export const requireEntity = (...entities: EntityType[]): RequestHandler => {
-  return (req, res, next) => {
+export const requireEntity = (...entities: EntityType[]) => {
+  return (req: IRequest, res: Response, next: NextFunction) => {
     if (!req.session) {
       return next(new AppError('User is not logged in', 401));
     }

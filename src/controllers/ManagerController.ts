@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { inject } from 'inversify';
 import { controller, httpPost, request, requestBody, response } from 'inversify-express-utils';
 import { TYPES } from '../di';
@@ -9,6 +9,7 @@ import { requireEntity } from '../middleware/AuthMiddleware';
 import { IManagerService } from '../services';
 import { createDeviceSchema, createSiteSchema } from '../validators';
 import { CreateDeviceDTO, CreateSiteDTO } from '../dtos/manager';
+import { IRequest } from '../utils/types';
 
 @controller('/api/v1/manager')
 export class ManagerController extends BaseContoller {
@@ -17,13 +18,17 @@ export class ManagerController extends BaseContoller {
   }
 
   @httpPost('/new-site', joiMiddleware(createSiteSchema), TYPES.RequireSignIn, requireEntity('Manager'))
-  async createSite(@request() req: Request, @response() res: Response, @requestBody() payload: CreateSiteDTO) {
+  async createSite(@request() req: IRequest, @response() res: Response, @requestBody() payload: CreateSiteDTO) {
     const newSite = await this.managerService.createSite(payload, req.session.id);
     return this.sendResponse(res, StatusCodes.CREATED, 'created site successfully', newSite);
   }
 
   @httpPost('/new-device', joiMiddleware(createDeviceSchema), TYPES.RequireSignIn, requireEntity('Manager'))
-  async createDevice(@request() req: Request, @response() res: Response, @requestBody() payload: CreateDeviceDTO<any>) {
+  async createDevice(
+    @request() req: IRequest,
+    @response() res: Response,
+    @requestBody() payload: CreateDeviceDTO<any>
+  ) {
     const newDevice = await this.managerService.createDevice(payload, req.session.id);
     return this.sendResponse(res, StatusCodes.CREATED, 'created device successfully', newDevice);
   }
