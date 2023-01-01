@@ -25,8 +25,6 @@ export class RequireSignIn extends BaseMiddleware {
 
       req.session = session;
 
-      console.log(session);
-
       next();
     } catch (err) {
       return next(err);
