@@ -18,7 +18,7 @@ const managerSchema: Schema = new Schema<IManager>(
     name: {
       type: String,
       trim: true,
-      required: [true, "User's first name is required"],
+      required: [true, "User's name is required"],
     },
     email: {
       type: String,

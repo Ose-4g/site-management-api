@@ -4,6 +4,7 @@ import { database } from './mockDB';
 
 export { database };
 export * from './company';
+export * from './auth';
 
 export async function generateToken(session: Session, service: ISessionService): Promise<string> {
   return await service.createToken(session);

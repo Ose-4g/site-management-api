@@ -1,8 +1,9 @@
+import { entityTypes } from '../dtos';
 import joi from 'joi';
 import { requiredString } from './general';
 
 const loginSchemaDesc = {
-  email: requiredString.email().messages({
+  email: requiredString.email().lowercase().messages({
     'any.required': 'email is required',
     'string.email': 'invalid email provided',
   }),
@@ -11,7 +12,10 @@ const loginSchemaDesc = {
   }),
 };
 
-export const loginSchema = joi.object(loginSchemaDesc);
+export const loginSchema = joi.object({
+  ...loginSchemaDesc,
+  userType: requiredString.valid(...entityTypes),
+});
 
 export const signUpUserSchema = joi.object({
   ...loginSchemaDesc,

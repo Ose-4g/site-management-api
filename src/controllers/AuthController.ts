@@ -14,17 +14,10 @@ export class AuthController extends BaseContoller {
     super();
   }
 
-  @httpPost('/company-login', joiMiddleware(loginSchema))
+  @httpPost('/login', joiMiddleware(loginSchema))
   async managerLogin(@response() res: Response, @requestBody() payload: LoginDTO) {
     const { email, password } = payload;
-    const result = await this.authService.login(email, password, 'Company');
-    return this.sendResponse(res, 200, 'Successfully logged in', result);
-  }
-
-  @httpPost('/manager-login', joiMiddleware(loginSchema))
-  async companyLogin(@response() res: Response, @requestBody() payload: LoginDTO) {
-    const { email, password } = payload;
-    const result = await this.authService.login(email, password, 'Manager');
+    const result = await this.authService.login(email, password, payload.userType);
     return this.sendResponse(res, 200, 'Successfully logged in', result);
   }
 }

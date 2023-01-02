@@ -74,6 +74,7 @@ export class AuthService extends BaseService implements IAuthService {
     entity: EntityType
   ): Promise<{ data: Partial<ICompany | IManager>; token: string }> {
     let record: ICompany | IManager | null;
+
     if (entity === 'Company') {
       record = await this.Company.findOne({ email });
     } else {
