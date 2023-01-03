@@ -36,7 +36,7 @@ describe(`POST ${URL}`, () => {
     const dto = newCreateCompanyDTO();
     const originalPassword = dto.password;
     dto.password = await hash(dto!.password, 10);
-    const comp = await Company.create(dto);
+    await Company.create(dto);
 
     const response = await chai
       .request(app)
@@ -78,6 +78,5 @@ describe(`POST ${URL}`, () => {
       );
 
     expect(response.status).to.be.eq(StatusCodes.OK);
-    const data = response.body.data;
   });
 });

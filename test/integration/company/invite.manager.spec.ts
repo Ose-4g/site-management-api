@@ -7,7 +7,6 @@ import chai, { expect } from 'chai';
 import { database, generateToken, newCreateCompanyDTO, newInviteManagerDTO } from '../../helpers';
 
 import { Model } from 'mongoose';
-import { Redis } from 'ioredis';
 import { StatusCodes } from 'http-status-codes';
 import { TYPES } from '../../../src/di';
 import chaiHttp from 'chai-http';
@@ -17,7 +16,6 @@ chai.use(chaiHttp);
 
 const URL = '/api/v1/company/invite-manager';
 const Company = container.get<Model<ICompany>>(TYPES.Company);
-const redis = container.get<Redis>(TYPES.Redis);
 const Manager = container.get<Model<IManager>>(TYPES.Manager);
 const sessionService = container.get<ISessionService>(TYPES.SessionService);
 const notificationService = container.get<INotificationService>(TYPES.NotificationService);
@@ -34,7 +32,6 @@ describe(`POST ${URL}`, () => {
 
   after(async () => {
     await database.disconnect();
-    await redis.quit();
   });
 
   it('should throw 422 error if required parameter is not provided', async () => {
