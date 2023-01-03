@@ -9,17 +9,14 @@ import { CreateDeviceDTO, CreateSiteDTO } from '../dtos/manager';
 
 export interface IManagerService {
   createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
-  createDevice<T>(dto: CreateDeviceDTO<T>, managerId: string): Promise<IDevice<T>>;
+  createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
-  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>[]>;
+  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]>;
 }
 
 @injectable()
 export class ManagerService extends BaseService implements IManagerService {
-  constructor(
-    @inject(TYPES.Device) private Device: Model<IDevice<any>>,
-    @inject(TYPES.Site) private Site: Model<ISite>
-  ) {
+  constructor(@inject(TYPES.Device) private Device: Model<IDevice>, @inject(TYPES.Site) private Site: Model<ISite>) {
     super();
   }
 
@@ -40,7 +37,7 @@ export class ManagerService extends BaseService implements IManagerService {
     });
   }
 
-  async createDevice<T>(dto: CreateDeviceDTO<T>, managerId: string): Promise<IDevice<T>> {
+  async createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice> {
     // check if the site exists and is connected with the manager.
     const site = await this.checkSite(dto.site);
 
@@ -61,7 +58,7 @@ export class ManagerService extends BaseService implements IManagerService {
     return await this.Site.find({ manager: managerId });
   }
 
-  async getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice<any>[]> {
+  async getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]> {
     const site = await this.checkSite(siteId);
     if (site.manager.toString() !== managerid) {
       throw new AppError('You cannot access this site', 403);

@@ -35,8 +35,8 @@ const container = new Container();
 container.bind<Model<ICompany>>(TYPES.Company).toConstantValue(Company);
 container.bind<Model<IManager>>(TYPES.Manager).toConstantValue(Manager);
 container.bind<Model<ISite>>(TYPES.Site).toConstantValue(Site);
-container.bind<Model<IDevice<any>>>(TYPES.Device).toConstantValue(Device);
-container.bind<Model<IHeartBeat<any>>>(TYPES.HeartBeat).toConstantValue(HeartBeat);
+container.bind<Model<IDevice>>(TYPES.Device).toConstantValue(Device);
+container.bind<Model<IHeartBeat>>(TYPES.HeartBeat).toConstantValue(HeartBeat);
 
 container.bind<Redis>(TYPES.Redis).toConstantValue(redis);
 
