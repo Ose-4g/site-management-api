@@ -7,20 +7,20 @@ import { BaseService } from './BaseService';
 import { IHeartBeat } from '../models/HeartBeat';
 
 export interface IHearbeatService {
-  createRecord(message: Message): Promise<IHeartBeat<any>>;
+  createRecord(message: Message): Promise<IHeartBeat>;
 }
 
 @injectable()
 export class HeartBeatService extends BaseService implements IHearbeatService {
   constructor(
     @inject(TYPES.Site) private Site: Model<ISite>,
-    @inject(TYPES.Device) private Device: Model<IDevice<any>>,
-    @inject(TYPES.HeartBeat) private HeartBeat: Model<IHeartBeat<any>>
+    @inject(TYPES.Device) private Device: Model<IDevice>,
+    @inject(TYPES.HeartBeat) private HeartBeat: Model<IHeartBeat>
   ) {
     super();
   }
 
-  async createRecord(message: Message): Promise<IHeartBeat<any>> {
+  async createRecord(message: Message): Promise<IHeartBeat> {
     if (!message.site_id || !message.device_id) {
       throw new Error('site id or device id not provided');
     }
@@ -37,7 +37,7 @@ export class HeartBeatService extends BaseService implements IHearbeatService {
     return await this.checkDocumentExists(this.Site, id, 'Site');
   }
 
-  private async getDevice(id: string): Promise<IDevice<any>> {
+  private async getDevice(id: string): Promise<IDevice> {
     return await this.checkDocumentExists(this.Device, id, 'Device');
   }
 }

@@ -73,12 +73,6 @@ export class CompanyService extends BaseService implements ICompanyService {
     // check if manager has been sent invite
     const foundManager = await this.Manager.findOne({ email: manager.email });
 
-    if (foundManager?.company.toString() !== companyId) {
-      throw new AppError('Manager is registered with another company', StatusCodes.CONFLICT);
-    } else {
-      foundManager.password = hashedPassword;
-      await foundManager.save();
-    }
     if (!foundManager) {
       // create new manager
       await this.Manager.create({
@@ -87,6 +81,11 @@ export class CompanyService extends BaseService implements ICompanyService {
         company: companyId,
         password: hashedPassword,
       });
+    } else if (foundManager?.company.toString() !== companyId) {
+      throw new AppError('Manager is registered with another company', StatusCodes.CONFLICT);
+    } else {
+      foundManager.password = hashedPassword;
+      await foundManager.save();
     }
 
     await this.notificationService.sendMail(

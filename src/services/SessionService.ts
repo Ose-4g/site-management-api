@@ -24,7 +24,6 @@ export class SessionService implements ISessionService {
 
   async extendSession(token: string): Promise<Session> {
     const stringifiedSession = await this.redis.get(token);
-    console.log(stringifiedSession);
     if (!stringifiedSession) {
       throw new AppError('Session not found', 401);
     }

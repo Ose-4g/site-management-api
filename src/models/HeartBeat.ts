@@ -7,13 +7,13 @@ import constants from '../utils/constants';
 
 const { DEVICE, SITE, HEARTBEAT } = constants.mongooseModels;
 
-export interface IHeartBeat<T> extends BaseModel {
+export interface IHeartBeat extends BaseModel {
   site: PopulatedDoc<ISite>;
-  device: PopulatedDoc<IDevice<any>>;
-  metadata: T;
+  device: PopulatedDoc<IDevice>;
+  metadata: any;
 }
 
-const heartBeatSchema = new Schema<IHeartBeat<any>>(
+const heartBeatSchema = new Schema<IHeartBeat>(
   {
     device: {
       type: Schema.Types.ObjectId,
@@ -33,4 +33,4 @@ const heartBeatSchema = new Schema<IHeartBeat<any>>(
   { timestamps: true }
 );
 
-export const HeartBeat: Model<IHeartBeat<any>> = model<IHeartBeat<any>>(HEARTBEAT, heartBeatSchema);
+export const HeartBeat: Model<IHeartBeat> = model<IHeartBeat>(HEARTBEAT, heartBeatSchema);

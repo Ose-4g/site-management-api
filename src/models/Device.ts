@@ -16,15 +16,15 @@ export interface SolarPanelMetadata {
   currentRating: number;
 }
 
-export interface IDevice<T> extends BaseModel {
+export interface IDevice extends BaseModel {
   name: string;
   type: DeviceType;
   site: PopulatedDoc<ISite>;
   maintenanceWindow: number;
-  metadata: T;
+  metadata: any;
 }
 
-const deviceSchema = new Schema<IDevice<any>>(
+const deviceSchema = new Schema<IDevice>(
   {
     name: {
       type: String,
@@ -48,4 +48,4 @@ const deviceSchema = new Schema<IDevice<any>>(
   { timestamps: true }
 );
 
-export const Device: Model<IDevice<any>> = model<IDevice<any>>(DEVICE, deviceSchema);
+export const Device: Model<IDevice> = model<IDevice>(DEVICE, deviceSchema);

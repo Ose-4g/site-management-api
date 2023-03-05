@@ -8,8 +8,8 @@ const { SITE, MANAGER } = constants.mongooseModels;
 
 export interface ISite extends BaseModel {
   name: string;
-  description: string;
-  location: string;
+  description?: string;
+  location?: string;
   manager: PopulatedDoc<IManager>;
 }
 

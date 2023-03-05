@@ -4,6 +4,7 @@ import { connect } from 'mqtt';
 import { container } from './app';
 import { env } from './config';
 
+console.log('I am in the mqtt listener');
 const client = connect(env.MQTT_URL);
 const heartBeatService = container.get<IHearbeatService>(TYPES.HeartBeatService);
 client.on('connect', function () {

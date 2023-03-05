@@ -24,11 +24,7 @@ export class ManagerController extends BaseContoller {
   }
 
   @httpPost('/new-device', joiMiddleware(createDeviceSchema), TYPES.RequireSignIn, requireEntity('Manager'))
-  async createDevice(
-    @request() req: IRequest,
-    @response() res: Response,
-    @requestBody() payload: CreateDeviceDTO<any>
-  ) {
+  async createDevice(@request() req: IRequest, @response() res: Response, @requestBody() payload: CreateDeviceDTO) {
     const newDevice = await this.managerService.createDevice(payload, req.session.id);
     return this.sendResponse(res, StatusCodes.CREATED, 'created device successfully', newDevice);
   }
