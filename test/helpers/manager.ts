@@ -1,6 +1,7 @@
-import { CreateSiteDTO } from '../../src/dtos';
+import { CreateDeviceDTO, CreateSiteDTO } from '../../src/dtos';
+import { IManager, deviceTypes } from '../../src/models';
+
 import { DTOFactory } from '.';
-import { IManager } from '../../src/models';
 import { faker } from '@faker-js/faker';
 
 export const newManagerDTO: DTOFactory<IManager> = (extras) => {
@@ -21,3 +22,13 @@ export const newCreateSiteDTO: DTOFactory<CreateSiteDTO> = (extras) => {
     ...extras,
   };
 };
+
+// export const newCreateDeviceDTO: DTOFactory<CreateDeviceDTO> = (extras) => {
+//   return {
+//     type: faker.helpers.arrayElement(deviceTypes),
+//     name: faker.company.name(),
+//     metadata: {
+//       voltageRa,
+//     },
+//   };
+// };

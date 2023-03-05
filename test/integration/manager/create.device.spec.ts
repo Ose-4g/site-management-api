@@ -18,7 +18,7 @@ const URL = '/api/v1/manager/new-site';
 const Company = container.get<Model<ICompany>>(TYPES.Company);
 const Manager = container.get<Model<IManager>>(TYPES.Manager);
 const Site = container.get<Model<ISite>>(TYPES.Site);
-const Device = container.get<Model<IDevice<any>>>(TYPES.Device);
+const Device = container.get<Model<IDevice>>(TYPES.Device);
 const sessionService = container.get<ISessionService>(TYPES.SessionService);
 
 describe(`POST ${URL}`, () => {
@@ -30,6 +30,7 @@ describe(`POST ${URL}`, () => {
     await Company.deleteMany();
     await Manager.deleteMany();
     await Site.deleteMany();
+    await Device.deleteMany();
   });
 
   after(async () => {
