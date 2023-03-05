@@ -1,5 +1,5 @@
 import { CreateDeviceDTO, CreateSiteDTO } from '../../src/dtos';
-import { IManager, deviceTypes } from '../../src/models';
+import { IManager, ISite, deviceTypes } from '../../src/models';
 
 import { DTOFactory } from '.';
 import { faker } from '@faker-js/faker';
@@ -23,12 +23,23 @@ export const newCreateSiteDTO: DTOFactory<CreateSiteDTO> = (extras) => {
   };
 };
 
-// export const newCreateDeviceDTO: DTOFactory<CreateDeviceDTO> = (extras) => {
-//   return {
-//     type: faker.helpers.arrayElement(deviceTypes),
-//     name: faker.company.name(),
-//     metadata: {
-//       voltageRa,
-//     },
-//   };
-// };
+export const newCreateDeviceDTO: DTOFactory<CreateDeviceDTO> = (extras) => {
+  return {
+    type: faker.helpers.arrayElement(deviceTypes),
+    name: faker.company.name(),
+    maintenanceWindow: faker.datatype.number(),
+    site: faker.database.mongodbObjectId(),
+    metadata: {},
+    ...extras,
+  };
+};
+
+export const newSiteDTO: DTOFactory<ISite> = (extras) => {
+  return {
+    name: faker.address.state(),
+    description: faker.commerce.productDescription(),
+    location: faker.address.streetAddress(),
+    manager: faker.database.mongodbObjectId(),
+    ...extras,
+  } as ISite;
+};

@@ -4,7 +4,7 @@ import { ICompany, IDevice, IManager, ISite } from '../../../src/models';
 import app, { container } from '../../../src/app';
 import chai, { expect } from 'chai';
 import { database, generateToken } from '../../helpers';
-import { newCreateSiteDTO, newManagerDTO } from '../../helpers/manager';
+import { newCreateDeviceDTO, newManagerDTO, newSiteDTO } from '../../helpers/manager';
 
 import { ISessionService } from '../../../src/services';
 import { Model } from 'mongoose';
@@ -14,7 +14,7 @@ import chaiHttp from 'chai-http';
 
 chai.use(chaiHttp);
 
-const URL = '/api/v1/manager/new-site';
+const URL = '/api/v1/manager/new-device';
 const Company = container.get<Model<ICompany>>(TYPES.Company);
 const Manager = container.get<Model<IManager>>(TYPES.Manager);
 const Site = container.get<Model<ISite>>(TYPES.Site);
@@ -37,27 +37,35 @@ describe(`POST ${URL}`, () => {
     await database.disconnect();
   });
 
-  it('should create site sucessfully', async () => {
+  it('should create device sucessfully', async () => {
     const manager = await Manager.create(newManagerDTO());
-    const dto = newCreateSiteDTO();
-
+    const site = await Site.create(newSiteDTO({ manager: manager._id.toString() }));
     const token = await generateToken({ userType: 'Manager', id: manager._id.toString() }, sessionService);
+
+    const dto = newCreateDeviceDTO({
+      site: site._id.toString(),
+      type: 'generator',
+      metadata: {
+        MVARating: 100,
+      },
+    });
+
     const response = await chai.request(app).post(URL).send(dto).set('Authorization', token);
 
     expect(response.status).to.be.eq(StatusCodes.CREATED);
 
-    const site: ISite = response.body.data;
+    const device: IDevice = response.body.data;
 
-    const savedSite = await Site.findById(site._id);
+    const savedDevice = await Device.findById(device._id);
 
-    expect(site.name).to.be.eq(dto.name);
-    expect(site.description).to.be.eq(dto.description);
-    expect(site.location).to.be.eq(dto.location);
-    expect(site.manager).to.be.eq(manager._id.toString());
+    expect(device.name).to.be.eq(dto.name);
+    expect(device.type).to.be.eq(dto.type);
+    expect(device.site.toString()).to.be.eq(site._id.toString());
+    expect(device.maintenanceWindow).to.be.eq(dto.maintenanceWindow);
 
-    expect(savedSite!.name).to.be.eq(dto.name);
-    expect(savedSite!.description).to.be.eq(dto.description);
-    expect(savedSite!.location).to.be.eq(dto.location);
-    expect(savedSite!.manager.toString()).to.be.eq(manager._id.toString());
+    expect(savedDevice!.name).to.be.eq(dto.name);
+    expect(savedDevice!.type).to.be.eq(dto.type);
+    expect(savedDevice!.site.toString()).to.be.eq(site._id.toString());
+    expect(savedDevice!.maintenanceWindow).to.be.eq(dto.maintenanceWindow);
   });
 });
