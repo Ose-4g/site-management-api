@@ -18,6 +18,7 @@ import { IManagerService, ManagerService } from './services/ManagerService';
 import express, { Request, Response } from 'express';
 
 import { Container } from 'inversify';
+import { CronService } from './services/CronService';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Model } from 'mongoose';
 import Redis from 'ioredis';
@@ -47,6 +48,7 @@ container.bind<RequireSignIn>(TYPES.RequireSignIn).to(RequireSignIn);
 container.bind<ISessionService>(TYPES.SessionService).to(SessionService);
 container.bind<IManagerService>(TYPES.ManagerService).to(ManagerService);
 container.bind<IHearbeatService>(TYPES.HeartBeatService).to(HeartBeatService);
+container.bind<CronService>(TYPES.CronService).to(CronService);
 
 const server = new InversifyExpressServer(container);
 

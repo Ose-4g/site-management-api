@@ -12,4 +12,5 @@ export const TYPES = {
   SessionService: Symbol.for('SessionService'),
   ManagerService: Symbol.for('ManagerService'),
   HeartBeatService: Symbol.for('HeartBeatService'),
+  CronService: Symbol.for('CronService'),
 };

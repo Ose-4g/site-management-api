@@ -1098,6 +1098,14 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@ose4g/cron-manager@^1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@ose4g/cron-manager/-/cron-manager-1.3.2.tgz#4bcffa1a3db7ebb29cdae6c9f3793da98cda4c68"
+  integrity sha512-B4Qh8A6w6Y3yhUOZEGobNaTZdcLF2DaMNz9DN71rgGPIOpiCBEFjCe+ePK4EKvQUOAVPJvQsygzBTz407qi8OA==
+  dependencies:
+    node-cron "^3.0.0"
+    reflect-metadata "^0.1.13"
+
 "@sideway/address@^4.1.3":
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.4.tgz#03dccebc6ea47fdc226f7d3d1ad512955d4783f0"
