@@ -14,6 +14,7 @@ import { BaseService } from './BaseService';
 export interface ICompanyService {
   createCompany(dto: CreateCompanyDTO): Promise<ICompany>;
   inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void>;
+  listManagers(companyId: string): Promise<IManager[]>;
 }
 
 @injectable()
