@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { controller, httpPost, request, requestBody, response } from 'inversify-express-utils';
+import { controller, httpGet, httpPost, request, requestBody, requestParam, response } from 'inversify-express-utils';
 import { TYPES } from '../di';
 import joiMiddleware from '../middleware/joiMiddleware';
 import { BaseContoller } from './BaseController';
@@ -27,5 +27,17 @@ export class ManagerController extends BaseContoller {
   async createDevice(@request() req: IRequest, @response() res: Response, @requestBody() payload: CreateDeviceDTO) {
     const newDevice = await this.managerService.createDevice(payload, req.session.id);
     return this.sendResponse(res, StatusCodes.CREATED, 'created device successfully', newDevice);
+  }
+
+  @httpGet('/sites', TYPES.RequireSignIn, requireEntity('Manager'))
+  async getSites(@request() req: IRequest, @response() res: Response) {
+    const sites = await this.managerService.getSitesForManager(req.session.id);
+    return this.sendResponse(res, StatusCodes.OK, `Fetched sites successfully`, sites);
+  }
+
+  @httpGet('/devices/:siteId', TYPES.RequireSignIn, requireEntity('Manager'))
+  async viewDevices(@request() req: IRequest, @response() res: Response, @requestParam('siteId') siteId: string) {
+    const devices = await this.managerService.getDevicesOnSite(req.session.id, siteId);
+    return this.sendResponse(res, StatusCodes.OK, `Fetched devices successfully`, devices);
   }
 }

@@ -29,13 +29,13 @@ export class CompanyController extends BaseContoller {
     return this.sendResponse(res, StatusCodes.OK, `Invite has been sent to ${payload.email}`);
   }
 
-  @httpGet('/managers', joiMiddleware(inviteManagerSchema), TYPES.RequireSignIn, requireEntity('Company'))
+  @httpGet('/managers', TYPES.RequireSignIn, requireEntity('Company'))
   async getManagers(@request() req: IRequest, @response() res: Response) {
     const managers = await this.companyService.listManagers(req.session.id);
     return this.sendResponse(res, StatusCodes.OK, `Fetched managers successfully`, managers);
   }
 
-  @httpGet('/sites/:managerId', joiMiddleware(inviteManagerSchema), TYPES.RequireSignIn, requireEntity('Company'))
+  @httpGet('/sites/:managerId', TYPES.RequireSignIn, requireEntity('Company'))
   async viewSites(@request() req: IRequest, @response() res: Response, @requestParam('managerId') managerId: string) {
     const sites = await this.companyService.listManagerSites(req.session.id, managerId);
     return this.sendResponse(res, StatusCodes.OK, `Fetched sites successfully`, sites);
