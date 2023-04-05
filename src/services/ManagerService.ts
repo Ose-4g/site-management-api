@@ -84,8 +84,18 @@ export class ManagerService extends BaseService implements IManagerService {
     return devices;
   }
 
+  async getDeviceInfo(deviceId: string): Promise<IHeartBeat[]> {
+    const device = await this.checkDevice(deviceId);
+
+    return await this.Heartbeat.find({ device: deviceId, site: device.site }).sort({ createdAt: -1 });
+  }
+
   private async checkSite(id: string): Promise<ISite> {
     return this.checkDocumentExists(this.Site, id, 'Site');
+  }
+
+  private async checkDevice(id: string): Promise<IDevice> {
+    return this.checkDocumentExists(this.Device, id, 'Device');
   }
 
   // private async checkDevice<T>(id: string): Promise<IDevice<T>> {
