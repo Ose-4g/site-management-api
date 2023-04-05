@@ -12,6 +12,7 @@ export interface IManagerService {
   createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
   getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]>;
+  getDeviceInfo(deviceId: string): Promise<IHeartBeat[]>;
 }
 
 @injectable()
