@@ -24,6 +24,10 @@ export interface IDevice extends BaseModel {
   metadata: any;
 }
 
+export interface InflatedDeviceInfo extends IDevice {
+  isOnline: boolean;
+}
+
 const deviceSchema = new Schema<IDevice>(
   {
     name: {
