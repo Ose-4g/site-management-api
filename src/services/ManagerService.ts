@@ -1,4 +1,4 @@
-import { IDevice, ISite } from '../models';
+import { IDevice, IHeartBeat, InflatedDeviceInfo, ISite } from '../models';
 import { Model } from 'mongoose';
 import AppError from '../errors/AppError';
 import { inject, injectable } from 'inversify';
@@ -16,7 +16,11 @@ export interface IManagerService {
 
 @injectable()
 export class ManagerService extends BaseService implements IManagerService {
-  constructor(@inject(TYPES.Device) private Device: Model<IDevice>, @inject(TYPES.Site) private Site: Model<ISite>) {
+  constructor(
+    @inject(TYPES.Device) private Device: Model<IDevice>,
+    @inject(TYPES.Site) private Site: Model<ISite>,
+    @inject(TYPES.HeartBeat) private Heartbeat: Model<IHeartBeat>
+  ) {
     super();
   }
 
@@ -58,12 +62,26 @@ export class ManagerService extends BaseService implements IManagerService {
     return await this.Site.find({ manager: managerId });
   }
 
-  async getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]> {
+  async getDevicesOnSite(managerid: string, siteId: string): Promise<InflatedDeviceInfo[]> {
     const site = await this.checkSite(siteId);
     if (site.manager.toString() !== managerid) {
       throw new AppError('You cannot access this site', 403);
     }
-    return await this.Device.find({ site: siteId });
+    const devices: InflatedDeviceInfo[] = await this.Device.find({ site: siteId });
+    const n = devices.length;
+
+    for (let i = 0; i < n; i++) {
+      const device = devices[i];
+      const [heartbeat] = await this.Heartbeat.find({ device: device._id.toString(), site: device.site.toString() })
+        .sort({
+          createdAt: -1,
+        })
+        .limit(1);
+
+      device.isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000;
+    }
+
+    return devices;
   }
 
   private async checkSite(id: string): Promise<ISite> {
