@@ -12,7 +12,7 @@
     "test": "cross-env NODE_ENV=test TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/**/*.ts' --exit --timeout 50000",
     "format": "prettier --write src/ && prettier --write test/",
     "serve:dev": "cross-env NODE_ENV=production  nodemon",
-    "coverage": "nyc yarn run test",
+    "coverage": "nyc npm run test",
     "prepare": "husky install"
   },
   "lint-staged": {
