@@ -18,7 +18,7 @@ const cronManager = new CronManager();
 cronManager.register(CronService, container.get<CronService>(TYPES.CronService));
 
 const startServer = async () => {
-  cronManager.startAll();
+  // cronManager.startAll();
   //do not connect to mongodb in unit testing mode.
   if (process.env.NODE_ENV !== 'test') await connectToDB();
   app.listen(PORT || 6000, () => {
