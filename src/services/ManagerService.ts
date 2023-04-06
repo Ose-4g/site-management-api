@@ -1,4 +1,4 @@
-import { IDevice, ISite } from '../models';
+import { IDevice, IHeartBeat, InflatedDeviceInfo, ISite } from '../models';
 import { Model } from 'mongoose';
 import AppError from '../errors/AppError';
 import { inject, injectable } from 'inversify';
@@ -12,11 +12,16 @@ export interface IManagerService {
   createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
   getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]>;
+  getDeviceInfo(deviceId: string): Promise<IHeartBeat[]>;
 }
 
 @injectable()
 export class ManagerService extends BaseService implements IManagerService {
-  constructor(@inject(TYPES.Device) private Device: Model<IDevice>, @inject(TYPES.Site) private Site: Model<ISite>) {
+  constructor(
+    @inject(TYPES.Device) private Device: Model<IDevice>,
+    @inject(TYPES.Site) private Site: Model<ISite>,
+    @inject(TYPES.HeartBeat) private Heartbeat: Model<IHeartBeat>
+  ) {
     super();
   }
 
@@ -58,16 +63,40 @@ export class ManagerService extends BaseService implements IManagerService {
     return await this.Site.find({ manager: managerId });
   }
 
-  async getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]> {
+  async getDevicesOnSite(managerid: string, siteId: string): Promise<InflatedDeviceInfo[]> {
     const site = await this.checkSite(siteId);
     if (site.manager.toString() !== managerid) {
       throw new AppError('You cannot access this site', 403);
     }
-    return await this.Device.find({ site: siteId });
+    const devices: InflatedDeviceInfo[] = await this.Device.find({ site: siteId });
+    const n = devices.length;
+
+    for (let i = 0; i < n; i++) {
+      const device = devices[i];
+      const [heartbeat] = await this.Heartbeat.find({ device: device._id.toString(), site: device.site.toString() })
+        .sort({
+          createdAt: -1,
+        })
+        .limit(1);
+
+      device.isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000;
+    }
+
+    return devices;
+  }
+
+  async getDeviceInfo(deviceId: string): Promise<IHeartBeat[]> {
+    const device = await this.checkDevice(deviceId);
+
+    return await this.Heartbeat.find({ device: deviceId, site: device.site }).sort({ createdAt: -1 });
   }
 
   private async checkSite(id: string): Promise<ISite> {
     return this.checkDocumentExists(this.Site, id, 'Site');
+  }
+
+  private async checkDevice(id: string): Promise<IDevice> {
+    return this.checkDocumentExists(this.Device, id, 'Device');
   }
 
   // private async checkDevice<T>(id: string): Promise<IDevice<T>> {

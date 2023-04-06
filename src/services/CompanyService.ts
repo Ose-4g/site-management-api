@@ -1,4 +1,4 @@
-import { ICompany, IManager } from '../models';
+import { ICompany, IManager, ISite } from '../models';
 import { Model } from 'mongoose';
 import AppError from '../errors/AppError';
 import { inject, injectable } from 'inversify';
@@ -14,6 +14,8 @@ import { BaseService } from './BaseService';
 export interface ICompanyService {
   createCompany(dto: CreateCompanyDTO): Promise<ICompany>;
   inviteManager(companyId: string, manager: InviteManagerDTO): Promise<void>;
+  listManagers(companyId: string): Promise<IManager[]>;
+  listManagerSites(companyId: string, managerId: string): Promise<ISite[]>;
 }
 
 @injectable()
@@ -21,6 +23,7 @@ export class CompanyService extends BaseService implements ICompanyService {
   constructor(
     @inject(TYPES.Company) private Company: Model<ICompany>,
     @inject(TYPES.Manager) private Manager: Model<IManager>,
+    @inject(TYPES.Site) private Site: Model<ISite>,
     @inject(TYPES.NotificationService) private notificationService: INotificationService
   ) {
     super();
@@ -29,6 +32,11 @@ export class CompanyService extends BaseService implements ICompanyService {
   private async checkCompany(id: string): Promise<ICompany> {
     return this.checkDocumentExists(this.Company, id, 'Company');
   }
+
+  private checkManager(id: string): Promise<IManager> {
+    return this.checkDocumentExists(this.Manager, id, 'Manager');
+  }
+
   // private async sendVerificationCode(user: IUser) {
   //   const code = generateCode(4);
   //   const minutesToExpire = 10;
@@ -107,5 +115,16 @@ export class CompanyService extends BaseService implements ICompanyService {
 
   async listManagers(companyId: string): Promise<IManager[]> {
     return await this.Manager.find({ company: companyId });
+  }
+
+  async listManagerSites(companyId: string, managerId: string): Promise<ISite[]> {
+    await this.checkCompany(companyId);
+    const manager = await this.checkManager(managerId);
+
+    if (manager.company.toString() !== companyId) {
+      throw new AppError('Manager is not part of this company', StatusCodes.FORBIDDEN);
+    }
+
+    return await this.Site.find({ manager: managerId });
   }
 }
