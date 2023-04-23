@@ -15,7 +15,7 @@ import sinon from 'sinon';
 
 chai.use(chaiHttp);
 
-const URL = '/api/v1/manager/sites';
+const URL = '/api/v1/manager/devices';
 const Company = container.get<Model<ICompany>>(TYPES.Company);
 const Manager = container.get<Model<IManager>>(TYPES.Manager);
 const Site = container.get<Model<ISite>>(TYPES.Site);
@@ -25,7 +25,7 @@ const HeartBeat = container.get<Model<IHeartBeat>>(TYPES.HeartBeat);
 const sessionService = container.get<ISessionService>(TYPES.SessionService);
 const notificationService = container.get<INotificationService>(TYPES.NotificationService);
 
-describe(`POST ${URL}`, () => {
+describe.only(`POST ${URL}`, () => {
   before(async () => {
     await database.connect();
   });
@@ -60,13 +60,12 @@ describe(`POST ${URL}`, () => {
       metadata: {},
     });
     const token = await generateToken({ userType: 'Manager', id: manager._id.toString() }, sessionService);
-    const response = await chai.request(app).get(`${URL}/${site._id.toString()}/devices`).set('Authorization', token);
+    const response = await chai.request(app).get(`${URL}/${device._id.toString()}/`).set('Authorization', token);
 
     expect(response.status).to.be.eq(StatusCodes.OK);
-    expect(response.body.data.length).to.be.eq(10);
-    const devices: InflatedDeviceInfo[] = response.body.data;
-    devices.forEach((item) => {
-      expect(item.isOnline).to.be.eq(item._id.toString() === device._id.toString());
-    });
+    const deviceInfo: InflatedDeviceInfo = response.body.data;
+
+    expect(deviceInfo.isOnline).to.be.true;
+    expect(deviceInfo.logs!.length).to.be.eq(1);
   });
 });

@@ -41,7 +41,7 @@ export class ManagerController extends BaseContoller {
     return this.sendResponse(res, StatusCodes.OK, `Fetched devices successfully`, devices);
   }
 
-  @httpGet('/device/:deviceId', TYPES.RequireSignIn, requireEntity('Manager'))
+  @httpGet('/devices/:deviceId', TYPES.RequireSignIn, requireEntity('Manager'))
   async getDeviceInfo(@request() req: IRequest, @response() res: Response, @requestParam('deviceId') deviceId: string) {
     const heartbeats = await this.managerService.getDeviceInfo(deviceId);
     return this.sendResponse(res, StatusCodes.OK, `Fetched device info successfully`, heartbeats);
