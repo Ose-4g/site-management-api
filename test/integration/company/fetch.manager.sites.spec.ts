@@ -23,7 +23,7 @@ const Site = container.get<Model<ISite>>(TYPES.Site);
 const sessionService = container.get<ISessionService>(TYPES.SessionService);
 const notificationService = container.get<INotificationService>(TYPES.NotificationService);
 
-describe.only(`POST ${URL}/:siteId`, () => {
+describe(`POST ${URL}/:siteId`, () => {
   before(async () => {
     await database.connect();
   });

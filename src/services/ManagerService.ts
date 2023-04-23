@@ -11,7 +11,7 @@ export interface IManagerService {
   createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
   createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
-  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]>;
+  getDevicesOnSite(managerid: string, siteId: string): Promise<InflatedDeviceInfo[]>;
   getDeviceInfo(deviceId: string): Promise<IHeartBeat[]>;
 }
 
@@ -79,7 +79,8 @@ export class ManagerService extends BaseService implements IManagerService {
         })
         .limit(1);
 
-      device.isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000;
+      const isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000 ? true : false;
+      devices[i] = { ...devices[i].toJSON(), isOnline } as InflatedDeviceInfo;
     }
 
     return devices;

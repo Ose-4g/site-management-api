@@ -1,5 +1,5 @@
 import { CreateDeviceDTO, CreateSiteDTO } from '../../src/dtos';
-import { IManager, ISite, deviceTypes } from '../../src/models';
+import { IDevice, IManager, ISite, deviceTypes } from '../../src/models';
 
 import { DTOFactory } from '.';
 import { faker } from '@faker-js/faker';
