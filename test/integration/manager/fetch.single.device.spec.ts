@@ -25,7 +25,7 @@ const HeartBeat = container.get<Model<IHeartBeat>>(TYPES.HeartBeat);
 const sessionService = container.get<ISessionService>(TYPES.SessionService);
 const notificationService = container.get<INotificationService>(TYPES.NotificationService);
 
-describe.only(`POST ${URL}`, () => {
+describe(`POST ${URL}`, () => {
   before(async () => {
     await database.connect();
   });
@@ -42,7 +42,7 @@ describe.only(`POST ${URL}`, () => {
     await database.disconnect();
   });
 
-  it('should fetch devices for a site successfully', async () => {
+  it('should fetch single device for a site successfully', async () => {
     const company = await Company.create(newCreateCompanyDTO());
 
     const manager = await Manager.create(newManagerDTO({ company: company._id.toString() }));
