@@ -11,8 +11,8 @@ export interface IManagerService {
   createSite(dto: CreateSiteDTO, managerId: string): Promise<ISite>;
   createDevice(dto: CreateDeviceDTO, managerId: string): Promise<IDevice>;
   getSitesForManager(managerId: string): Promise<ISite[]>;
-  getDevicesOnSite(managerid: string, siteId: string): Promise<IDevice[]>;
-  getDeviceInfo(deviceId: string): Promise<IHeartBeat[]>;
+  getDevicesOnSite(managerid: string, siteId: string): Promise<InflatedDeviceInfo[]>;
+  getDeviceInfo(deviceId: string): Promise<InflatedDeviceInfo>;
 }
 
 @injectable()
@@ -79,16 +79,23 @@ export class ManagerService extends BaseService implements IManagerService {
         })
         .limit(1);
 
-      device.isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000;
+      const isOnline = heartbeat && Date.now() - heartbeat.createdAt.getTime() <= 2000 ? true : false;
+      devices[i] = { ...devices[i].toJSON(), isOnline } as InflatedDeviceInfo;
     }
 
     return devices;
   }
 
-  async getDeviceInfo(deviceId: string): Promise<IHeartBeat[]> {
+  async getDeviceInfo(deviceId: string): Promise<InflatedDeviceInfo> {
     const device = await this.checkDevice(deviceId);
-
-    return await this.Heartbeat.find({ device: deviceId, site: device.site }).sort({ createdAt: -1 });
+    const logs = await this.Heartbeat.find({ device: deviceId, site: device.site }).sort({ createdAt: -1 }).limit(20);
+    const [mostRecent] = logs;
+    const isOnline = mostRecent && Date.now() - mostRecent.createdAt.getTime() <= 2000 ? true : false;
+    return {
+      ...device.toJSON(),
+      isOnline,
+      logs,
+    } as InflatedDeviceInfo;
   }
 
   private async checkSite(id: string): Promise<ISite> {

@@ -2,11 +2,12 @@ import { model, Model, PopulatedDoc, Schema } from 'mongoose';
 import { BaseModel } from '../db';
 import { ISite } from './Site';
 import constants from '../utils/constants';
+import { IHeartBeat } from './HeartBeat';
 
 const { DEVICE, SITE } = constants.mongooseModels;
 
 export const deviceTypes = <const>['solar-panel', 'generator'];
-export type DeviceType = typeof deviceTypes[number];
+export type DeviceType = (typeof deviceTypes)[number];
 
 export interface GeneratorMetadata {
   MVARating: number;
@@ -26,6 +27,7 @@ export interface IDevice extends BaseModel {
 
 export interface InflatedDeviceInfo extends IDevice {
   isOnline: boolean;
+  logs?: IHeartBeat[];
 }
 
 const deviceSchema = new Schema<IDevice>(

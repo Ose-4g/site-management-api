@@ -35,13 +35,13 @@ export class ManagerController extends BaseContoller {
     return this.sendResponse(res, StatusCodes.OK, `Fetched sites successfully`, sites);
   }
 
-  @httpGet('sites/:siteId/devices', TYPES.RequireSignIn, requireEntity('Manager'))
+  @httpGet('/sites/:siteId/devices', TYPES.RequireSignIn, requireEntity('Manager'))
   async viewDevices(@request() req: IRequest, @response() res: Response, @requestParam('siteId') siteId: string) {
     const devices = await this.managerService.getDevicesOnSite(req.session.id, siteId);
     return this.sendResponse(res, StatusCodes.OK, `Fetched devices successfully`, devices);
   }
 
-  @httpGet('/device/:deviceId', TYPES.RequireSignIn, requireEntity('Manager'))
+  @httpGet('/devices/:deviceId', TYPES.RequireSignIn, requireEntity('Manager'))
   async getDeviceInfo(@request() req: IRequest, @response() res: Response, @requestParam('deviceId') deviceId: string) {
     const heartbeats = await this.managerService.getDeviceInfo(deviceId);
     return this.sendResponse(res, StatusCodes.OK, `Fetched device info successfully`, heartbeats);
