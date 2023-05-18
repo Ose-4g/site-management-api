@@ -24,6 +24,7 @@ import { Model } from 'mongoose';
 import Redis from 'ioredis';
 import { RequireSignIn } from './middleware/AuthMiddleware';
 import { TYPES } from './di';
+import cors from 'cors';
 import { env } from './config';
 import errorMiddleWare from './errors/errorHandler';
 import morgan from 'morgan';
@@ -55,6 +56,7 @@ const server = new InversifyExpressServer(container);
 server.setConfig((app) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cors());
 
   if (NODE_ENV === 'development') {
     app.use(morgan('dev'));
